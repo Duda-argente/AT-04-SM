@@ -8,6 +8,58 @@ import { Entypo } from '@expo/vector-icons';
 export default function App() {
   const [modoEscuro, setmodoEscuro] = useState(false)
   const buttons = ['AC', 'DEL', '%', '/', 7, 8, 9, '*', 4, 5, 6, '-', 3, 2, 1, '+', 0, '.', '+/-', '=']
+
+  const  [corretoNumber, setCorretoNumber] = useState("")
+  const [lastNumber, setLastNumber] = useState("")
+
+  function calculator(){
+    const splitNumbers = corretoNumber.split(' ')
+    const fistNumber = parseFloat(splitNumbers[0])
+    const lastNumber = parseFloat(splitNumbers[2])
+    const operator = splitNumbers[1]
+
+    switch(operator){
+      case '+':
+        setCorretoNumber((fistNumber + lastNumber).toString())
+        return
+      case '-': 
+      setCorretoNumber((fistNumber - lastNumber).toString())
+        return
+      case '*':
+        setCorretoNumber((fistNumber * lastNumber).toString())
+        return
+      case '/': 
+      setCorretoNumber((fistNumber / lastNumber).toString())
+        return
+    }
+  }
+
+  function handleInput(botaoPressed){
+    console.log(botaoPressed)
+    if(botaoPressed === '+' | botaoPressed === "-" | botaoPressed === "*" | botaoPressed === "/" ){
+      setCorretoNumber(corretoNumber + " " + botaoPressed + " ")
+      return
+    }
+    switch(botaoPressed){
+      case 'DEL':
+        setCorretoNumber(corretoNumber.substring(0, (corretoNumber.length -1)))
+        return
+      case 'AC':
+        setLastNumber("")
+        setCorretoNumber("")
+        return
+      case '=':
+        setLastNumber(corretoNumber + " = ")
+        calculator()
+        return
+      case '+/-':
+        return
+    }
+
+    setCorretoNumber(corretoNumber + botaoPressed)
+  }
+
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -69,15 +121,16 @@ export default function App() {
         <TouchableOpacity style={styles.botaotema}>
         <Entypo name={modoEscuro ? "light-up" : 'moon'} size={24} color={modoEscuro ? "black" : 'black'} onPress={() => modoEscuro ? setmodoEscuro(false): setmodoEscuro(true)}/>
         </TouchableOpacity>
-        <Text style={styles.historicotexto}> 2 + 2 = 4</Text>
-        <Text style={styles.resultadotexto}> 2 + 2 = 4</Text>
+  <Text style={styles.historicotexto}> {lastNumber}</Text>
+        <Text style={styles.resultadotexto}> {corretoNumber}</Text>
       </View>
       <View style={styles.buttons}>
         {buttons.map((botao) =>
         botao === '='?
-        <TouchableOpacity key={botao} style={[styles.botao, {backgroundColor: modoEscuro ? "#7FFFD4" : "#008B8B",}]}><Text style={[styles.textobotao, {color: "white", fontSize: 30}]}>{botao}</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => handleInput(botao)}  key={botao} style={[styles.botao, {backgroundColor: modoEscuro ? "#7FFFD4" : "#008B8B",}]}>
+          <Text style={[styles.textobotao, {color: "white", fontSize: 30}]}>{botao}</Text></TouchableOpacity>
         :
-        <TouchableOpacity key={botao} style={[styles.botao, {backgroundColor: typeof(botao)==='number' ? modoEscuro === true ? '#303946' : '#fff' : modoEscuro === true ? '#414853' : '#ededed' }]}>
+        <TouchableOpacity onPress={() => handleInput(botao)}  key={botao} style={[styles.botao, {backgroundColor: typeof(botao)==='number' ? modoEscuro === true ? '#303946' : '#fff' : modoEscuro === true ? '#414853' : '#ededed' }]}>
           <Text style={styles.textobotao}>{botao}</Text>
           </TouchableOpacity>
         )}
